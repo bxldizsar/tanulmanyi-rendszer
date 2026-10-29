@@ -1,0 +1,105 @@
+@startuml
+!pragma layout smetana
+title Egyetemi tanulmanyi rendszer - osztalydiagram
+skinparam classAttributeIconSize 0
+hide empty members
+
+package tanulmany.model {
+  abstract class Szemely {
+    -azonosito : String {final}
+    -nev : String
+    -email : String
+    #Szemely(azonosito, nev, email)
+    +getAzonosito() : String
+    +getNev() : String
+    +setNev(nev : String)
+    +getEmail() : String
+    +setEmail(email : String)
+    +equals(o : Object) : boolean {final}
+    +hashCode() : int {final}
+    +toString() : String
+  }
+
+  class Hallgato {
+    -beiratkozasok : List<Beiratkozas>
+    +beiratkozik(kurzus : Kurzus, felev : Felev) : Beiratkozas
+    +getBeiratkozasok() : List<Beiratkozas>
+    +teljesitette(kurzus : Kurzus) : boolean
+    +sulyozottAtlag() : double
+    +megszerzettKreditek() : int
+  }
+
+  class Oktato
+
+  class Kurzus {
+    -kod : String
+    -nev : String
+    -kredit : int
+    -maxLetszam : int
+    -oktato : Oktato
+    -elofeltetel : Kurzus
+    -beiratkozasok : List<Beiratkozas>
+    +getElofeltetel() : Optional<Kurzus>
+    +letszam(felev : Felev) : long
+    +telt(felev : Felev) : boolean
+    +atmenesiArany() : double
+    ~hozzaad(b : Beiratkozas)
+    +toString() : String
+  }
+
+  class Beiratkozas {
+    -hallgato : Hallgato
+    -kurzus : Kurzus
+    -felev : Felev
+    -jegy : Jegy
+    ~Beiratkozas(hallgato, kurzus, felev)
+    +getJegy() : Optional<Jegy>
+    +beirJegy(ertek : int)
+    +sikeres() : boolean
+    +toString() : String
+  }
+
+  class Jegy <<record>> {
+    +ertek : int
+    +sikeres() : boolean
+  }
+
+  class Felev <<record>> {
+    +ev : int
+    +szam : int
+    +compareTo(masik : Felev) : int
+  }
+
+  class BeiratkozasiHiba <<exception>>
+
+  interface "Comparable<Felev>" as Comparable
+}
+
+package tanulmany.szolgaltatas {
+  class Lekerdezesek {
+    +legjobbHallgatok(kurzus, darab) : List<Hallgato>
+    +legjobb3Hallgato(kurzus) : List<Hallgato>
+    +kreditekOktatonkent(kurzusok) : Map<Oktato, Integer>
+  }
+  class AtiratKeszito {
+    +keszit(hallgato) : String
+    +ment(hallgato, fajl : Path)
+  }
+}
+
+Szemely <|-- Hallgato
+Szemely <|-- Oktato
+Comparable <|.. Felev
+
+Hallgato "1" *-- "*" Beiratkozas : beiratkozasok >
+Kurzus "1" o-- "*" Beiratkozas : beiratkozasok >
+Beiratkozas "*" --> "1" Kurzus : kurzus >
+Beiratkozas "*" --> "1" Felev : felev >
+Beiratkozas "1" *-- "0..1" Jegy : jegy >
+Kurzus "*" --> "1" Oktato : oktato >
+Kurzus "*" --> "0..1" Kurzus : elofeltetel >
+
+Hallgato ..> BeiratkozasiHiba : <<throws>>
+Lekerdezesek ..> Kurzus
+AtiratKeszito ..> Hallgato
+@enduml
