@@ -15,7 +15,7 @@ import tanulmany.szolgaltatas.Lekerdezesek;
  *
  * @author boldi
  */
-public class main 
+public class Main
 {
     
     public static void main(String[] args) throws IOException
