@@ -11,13 +11,12 @@ public abstract class Szemely
     private String nev;
     private String email;
  
-    protected Szemely(String azonosito, String nev, String email) 
-    {
-        // TODO: validálás
-        this.azonosito = azonosito;
-        this.nev = nev;
-        this.email = email;
-    }
+    protected Szemely(String azonosito, String nev, String email)
+{
+    this.azonosito = ellenorizSzoveg(azonosito, "azonosito");
+    this.nev = ellenorizSzoveg(nev, "nev");
+    this.email = ellenorizEmail(email);
+}
     // TODO: getterek, equals, hashCode, toString
     
     
